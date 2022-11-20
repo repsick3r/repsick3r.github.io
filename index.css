@@ -30,8 +30,9 @@
 
 .whitebox1{
     border-radius: 10px;
-    background-color: #F2D26D;
+    /*background-color: #F2D26D;*/
     position: absolute;
+    background-color: gold;
     padding-left: 0.5rem;
     top: 90vh;
     left: 2vw;
@@ -40,8 +41,45 @@
     z-index: -1;
 }
 
+.textmidbox{
+    margin-left: 10vw;
+    background-color: #FFDF00;
+    width: 80vw;
+    height: 98vh;
+}
+
+.textbox{
+    color: inherit;
+    font-size: 1.5rem;
+    text-decoration-line: inherit;
+}
+
+.greenbox{
+    background-color: gold;
+    border-radius: 10px;
+    color: darkgoldenrod;
+    font-family: "Papyrus", fantasy;
+    margin-top: 6vh;
+    margin-left: 85vw;
+    padding: 0.5rem;
+    width: max-content;
+}
+
 .icon{
     height: 24px;
     width: 24px;
     padding-top: 0.6rem;
+}
+
+i.fa-linkedin-in{
+    color: #0077b5;
+}
+
+i.fa-instagram{
+    /*color: greenyellow;*/
+    color: #FD1D1D;
+}
+
+i.fa-twitter{
+    color: #00acee;
 }
