@@ -1,0 +1,44 @@
+.bgimg{
+    background-image: url("assets/bg2.png");
+    overflow: hidden;
+    background-repeat: repeat;
+}
+
+.topleft{
+    position: absolute;
+    left: 12vw;
+    top: 12vh;
+    z-index: -1;
+    height: 40%;
+}
+
+.rightmiddle{
+    position: absolute;
+    left: 30vw;
+    top: 6vh;
+    z-index: -2;
+    height: 70%;
+}
+
+.rightbottom{
+    position: absolute;
+    left: 60vw;
+    top: 46vh;
+    z-index: -1;
+    height: 50%;
+}
+
+.whitebox{
+    border-radius: 20px;
+    background-color: #F2D26D;
+    position: absolute;
+    top: 88vh;
+    left: 4vw;
+    width: 18vw;
+    height : 11vh;
+}
+
+.cicon{
+    height: 24px;
+    width: 24px;
+}
