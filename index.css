@@ -1,7 +1,15 @@
-.bgimg{
-    background-image: url("assets/bg2.png");
+/* Plain white background for index.html */
+.plain-bg {
+    background-color: #ffffff;
+    height: 100vh;
     overflow: hidden;
-    background-repeat: repeat;
+    margin: 0;
+    padding: 0;
+}
+
+/* Remove background image for gallery.html */
+.bgimg {
+    background: none; /* Remove background image */
 }
 
 .topleft{
@@ -26,19 +34,6 @@
     top: 46vh;
     z-index: -1;
     height: 50%;
-}
-
-.whitebox1{
-    border-radius: 10px;
-    /*background-color: #F2D26D;*/
-    position: absolute;
-    background-color: gold;
-    padding-left: 0.5rem;
-    top: 90vh;
-    left: 2vw;
-    width: 5.5vw;
-    height : 5vh;
-    z-index: -1;
 }
 
 .textmidbox{
@@ -84,47 +79,24 @@ i.fa-twitter{
     color: #00acee;
 }
 
-/* General styles */
+/* Adjusted styles for body */
 body {
     font-family: Arial, sans-serif;
     background-color: #f8f8f8; /* White bone theme */
     color: #333;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
 }
 
-header {
-    text-align: center;
-    padding: 20px;
-    background-color: #ffffff;
-    border-bottom: 1px solid #ddd;
-}
-
-main {
-    padding: 20px;
-    text-align: center;
-}
-
-footer {
-    text-align: center;
-    padding: 10px;
-    background-color: #ffffff;
-    border-top: 1px solid #ddd;
-}
-
-/* Button styles */
-.button {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 10px 0;
-    background-color: #007BFF;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-}
-
-.button:hover {
-    background-color: #0056b3;
+/* Placeholder to make content large */
+.main-placeholder {
+    height: 70vh; /* Adjust height as needed */
+    width: 100%;
 }
 
 /* Gallery styles */
@@ -133,6 +105,7 @@ footer {
     flex-wrap: wrap;
     gap: 10px;
     justify-content: center;
+    margin-top: 20px;
 }
 
 .gallery img {
@@ -140,4 +113,99 @@ footer {
     border: 1px solid #ddd;
     border-radius: 5px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    width: 150px; /* Ensure consistent width */
+    height: 150px; /* Ensure consistent height */
+    object-fit: cover; /* Maintain aspect ratio while filling dimensions */
+}
+
+/* Gallery image styles for bg2.png */
+.gallery img[src="assets/bg2.png"] {
+    transform: none; /* Remove zoom effect */
+    transition: none; /* Remove transition */
+    width: 150px; /* Match width of other images */
+    height: 150px; /* Match height of other images */
+    object-fit: cover; /* Maintain aspect ratio while filling dimensions */
+}
+
+/* Left-aligned gallery styles */
+.gallery.left-aligned {
+    justify-content: flex-start; /* Align images to the left */
+    align-items: flex-start; /* Align images to the top */
+    margin-left: 20px; /* Add some spacing from the left edge */
+    margin-top: 20px; /* Add spacing from the top */
+    flex-direction: column; /* Stack images vertically */
+    gap: 15px; /* Add spacing between images */
+}
+
+/* Gallery styles for white space on the left */
+.gallery.white-space-left {
+    position: absolute;
+    left: 0; /* Align to the left edge */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%); /* Adjust for vertical centering */
+    display: flex;
+    flex-direction: column; /* Stack images vertically */
+    gap: 15px; /* Add spacing between images */
+    padding-left: 20px; /* Add spacing from the left edge */
+}
+
+/* Gallery link styles */
+.gallery-link {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #F4D565; /* Updated button color */
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.gallery-link:hover {
+    background-color: #d4b04e; /* Slightly darker hover effect */
+}
+
+/* Back to Home link styles for gallery */
+.back-home-link {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #F4D565; /* Updated button color */
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.back-home-link:hover {
+    background-color: #d4b04e; /* Slightly darker hover effect */
+}
+
+/* Dock styles */
+.dock {
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.linkedin-link {
+    color: #0077b5;
+    font-size: 15px; /* Reduced size for dock effect */
+    text-decoration: none;
+    transition: transform 0.2s ease, color 0.2s ease;
+    padding: 10px; /* Padding for the transparent box */
+    background-color: rgba(255, 255, 255, 0.5); /* Transparent curved box */
+    border-radius: 15px; /* Curved edges */
+}
+
+.linkedin-link:hover {
+    color: #0056b3;
+    transform: scale(1.2); /* Slight zoom effect on hover */
+    background-color: rgba(255, 255, 255, 0.7); /* Slightly less transparent on hover */
 }
