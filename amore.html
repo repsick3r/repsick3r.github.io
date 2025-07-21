@@ -7,7 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <!-- Importing Playfair Display for titles and Cormorant Garamond for the letter content -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Cormorant+Garamond:wght@400;700&family=Lato&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Lato', sans-serif;
@@ -15,6 +16,7 @@
         }
         .title-font {
             font-family: 'Playfair Display', serif;
+            letter-spacing: 0.04em;
         }
         /* A soft, romantic gradient background */
         .romantic-gradient {
@@ -32,26 +34,93 @@
             z-index: 0;
         }
 
-        .heart {
-            position: absolute;
-            color: rgba(220, 38, 127, 0.2); /* Soft pink color for hearts */
-            animation: float 20s infinite ease-in-out;
+        /* Bobbing/bubbling hearts animation */
+        @keyframes float {
+            0%   { transform: translateY(0) scale(1) rotate(0deg); opacity: 0.8; }
+            20%  { transform: translateY(-40px) scale(1.1) rotate(10deg); opacity: 0.7; }
+            40%  { transform: translateY(-80px) scale(0.95) rotate(-10deg); opacity: 0.6; }
+            60%  { transform: translateY(-120px) scale(1.05) rotate(5deg); opacity: 0.5; }
+            80%  { transform: translateY(-160px) scale(1.15) rotate(-5deg); opacity: 0.7; }
+            100% { transform: translateY(-200px) scale(1) rotate(0deg); opacity: 0.8; }
         }
 
-        /* Floating animation for hearts */
-        @keyframes float {
-            0% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
-            50% { transform: translateY(-150px) rotate(25deg); opacity: 0.1; }
-            100% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+        .heart {
+            position: absolute;
+            color: #ff69b4; /* More prominent pink */
+            opacity: 0.7;
+            /* Slightly increased shadow for a stronger glow */
+            text-shadow: 0 2px 6px #ffb6e6;
+            animation: float 18s infinite cubic-bezier(.4,.8,.6,1.2);
+            filter: drop-shadow(0 0 6px rgba(255, 105, 180, 0.6));
         }
         
         .main-card {
             z-index: 10;
             position: relative;
+            max-width: 1100px; /* Increased size */
+            width: 95vw;
+            padding: 3.5rem 3rem; /* Increased padding */
+            box-sizing: border-box;
+            background: #faf6f8; /* Off-white paper color */
+            /* Crumpled paper effect */
+            box-shadow: 2px 15px 25px -10px rgba(0,0,0,0.2), 0 1px 4px rgba(0,0,0,0.1), inset 0 0 40px rgba(0,0,0,0.05);
+            border: 1px solid #fff;
+            transform: rotate(-0.5deg); /* Added subtle rotation */
+            /* New clip-path for all-around crumpled effect */
+            clip-path: polygon(0% 2%, 5% 0%, 10% 3%, 15% 1%, 20% 2%, 25% 0%, 30% 3%, 35% 1%, 40% 2%, 45% 0%, 50% 3%, 55% 1%, 60% 2%, 65% 0%, 70% 3%, 75% 1%, 80% 2%, 85% 0%, 90% 3%, 95% 1%, 100% 2%, 98% 5%, 100% 10%, 97% 15%, 99% 20%, 98% 25%, 100% 30%, 97% 35%, 99% 40%, 98% 45%, 100% 50%, 97% 55%, 99% 60%, 98% 65%, 100% 70%, 97% 75%, 99% 80%, 98% 85%, 100% 90%, 97% 95%, 100% 98%, 95% 100%, 90% 97%, 85% 99%, 80% 98%, 75% 100%, 70% 97%, 65% 99%, 60% 98%, 55% 100%, 50% 97%, 45% 99%, 40% 98%, 35% 100%, 30% 97%, 25% 99%, 20% 98%, 15% 100%, 10% 97%, 5% 99%, 0% 98%, 2% 95%, 0% 90%, 3% 85%, 1% 80%, 2% 75%, 0% 70%, 3% 65%, 1% 60%, 2% 55%, 0% 50%, 3% 45%, 1% 40%, 2% 35%, 0% 30%, 3% 25%, 1% 20%, 2% 15%, 0% 10%, 3% 5%);
+        }
+
+        /* Back button style */
+        .back-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #ffe4ec; /* lighter pink */
+            color: #d72660;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 14px;
+            z-index: 10;
+            font-family: 'Lato', sans-serif;
+            box-shadow: 0 2px 8px rgba(220,38,127,0.08);
+            border: 1px solid #f8bbd0;
+            cursor: pointer;
+        }
+
+        /* New font style for the letter content with a subtle shadow to make it pop */
+        .letter-content {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem; /* Slightly larger font */
+            line-height: 2.2rem; /* Adjusted line height */
+            color: #333;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 900px) {
+            .main-card {
+                padding: 2rem 1.5rem;
+            }
+            .letter-content {
+                font-size: 1.2rem;
+                line-height: 1.8rem;
+            }
+        }
+        @media (max-width: 600px) {
+            .main-card {
+                padding: 1.5rem 1rem;
+                 /* A simpler crumpled edge for mobile that's less distracting */
+                 clip-path: polygon(0% 1%, 10% 0%, 20% 1%, 30% 0%, 40% 1%, 50% 0%, 60% 1%, 70% 0%, 80% 1%, 90% 0%, 100% 1%, 100% 99%, 90% 100%, 80% 99%, 70% 100%, 60% 99%, 50% 100%, 40% 99%, 30% 100%, 20% 99%, 10% 100%, 0% 99%);
+                 transform: rotate(0deg); /* Reset rotation on mobile */
+            }
+            .letter-content {
+                font-size: 1.1rem;
+                line-height: 1.6rem;
+            }
         }
     </style>
 </head>
-<body class="romantic-gradient min-h-screen flex items-center justify-center p-4 sm:p-6">
+<body class="romantic-gradient min-h-screen flex items-center justify-center p-2 sm:p-6">
 
     <!-- Floating hearts in the background -->
     <div class="hearts-container">
@@ -59,17 +128,17 @@
     </div>
 
     <!-- Main container for the letter -->
-    <div class="main-card bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl max-w-2xl w-full p-8 sm:p-12 text-gray-800 ring-1 ring-black ring-opacity-5">
+    <div class="main-card">
         
         <!-- The content of the letter -->
-        <div class="space-y-6 text-lg leading-relaxed tracking-wide">
+        <div class="letter-content space-y-6">
             <p>Your voice is to my ears what sweet sagar water is to my throat, refreshing after a day of exhaustion.</p>
             
             <p>Your kindness is a quiet, deep harbor in a world of stormy seas, where my weary soul has finally found its safe anchor.</p>
             
             <p>Your body is a piece of art, more exquisite than the David of Florence, sculpted by God himself.</p>
             
-            <p>This longing kills me, and the anticipation fills me. They counter each other, never letting one surpass the other, coalescing like opposing notes in a symphony.</p>
+            <p>This longing kills me, and a n anticipation fills me. They counter each other, never letting one surpass the other, coalescing like opposing notes in a symphony.</p>
             
             <p>Life was uncertain and unsteady like the gushing of springs, but now you have become the cornerstone at which the water steadies and laminates.</p>
             
@@ -86,26 +155,12 @@
     </div>
 
     <!-- Back to Letters link -->
-    <a href="letters.html" style="
-        position: absolute;
-        top: 16px;
-        right: 16px;
-        background: #ffe4ec; /* lighter pink */
-        color: #d72660;
-        text-decoration: none;
-        padding: 10px 15px;
-        border-radius: 5px;
-        font-size: 14px;
-        z-index: 10;
-        font-family: 'Lato', sans-serif;
-        box-shadow: 0 2px 8px rgba(220,38,127,0.08);
-        border: 1px solid #f8bbd0;
-    ">Back to Letters</a>
+    <button class="back-button" onclick="history.back()">Back to Letters</button>
 
     <script>
         // Script to generate and place hearts randomly
         const heartsContainer = document.querySelector('.hearts-container');
-        const heartCount = 15; // Number of hearts
+        const heartCount = 20; // Increased heart count for more effect
 
         for (let i = 0; i < heartCount; i++) {
             const heart = document.createElement('div');
@@ -113,12 +168,12 @@
             heart.innerHTML = '♥';
             
             // Random size, position, and animation delay
-            const size = Math.random() * 30 + 15; // Size between 15px and 45px
+            const size = Math.random() * 40 + 20; // Size between 20px and 60px
             heart.style.fontSize = `${size}px`;
             heart.style.top = `${Math.random() * 100}%`;
             heart.style.left = `${Math.random() * 100}%`;
-            heart.style.animationDelay = `${Math.random() * 15}s`;
-            heart.style.animationDuration = `${Math.random() * 10 + 15}s`; // Duration between 15s and 25s
+            heart.style.animationDelay = `${Math.random() * 18}s`;
+            heart.style.animationDuration = `${Math.random() * 10 + 8}s`;
 
             heartsContainer.appendChild(heart);
         }
