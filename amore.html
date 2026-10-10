@@ -3,19 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Letter for You</title>
+    <title>A Collection of Letters</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Importing Playfair Display for titles and Cormorant Garamond for the letter content -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Cormorant+Garamond:wght@400;700&family=Lato&display=swap" rel="stylesheet">
+    <!-- Playfair Display for titles, Lato for UI, Cormorant Garamond for the letter content -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Cormorant+Garamond:wght@400;700&family=Lato:wght@300;400&display=swap" rel="stylesheet">
     <style>
+        /* Only one view is shown at a time */
+        [hidden] {
+            display: none !important;
+        }
+
+        /* Base styles for the page */
         body {
             font-family: 'Lato', sans-serif;
-            overflow: hidden; /* Hide scrollbars caused by floating hearts */
+            overflow-x: hidden;
+            position: relative;
+        }
+        /* While a letter is open, hide scrollbars caused by floating hearts */
+        body.reading {
+            overflow: hidden;
         }
         .title-font {
             font-family: 'Playfair Display', serif;
+        }
+
+        /* ================= Letters collection view ================= */
+
+        .page-gradient {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        /* --- Mobile First Styles --- */
+
+        /* Header is standard on mobile */
+        .page-header {
+            position: relative;
+            text-align: center;
+            margin-bottom: 2rem;
+            margin-top: 4rem; /* Space for the home button */
+        }
+
+        /* Carousel container is centered and takes up screen width on mobile */
+        .carousel-container {
+            position: relative;
+            width: 90vw;
+            height: 60vh;
+            max-height: 450px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1500px;
+            transform-style: preserve-3d;
+        }
+
+        /* Base card style */
+        .card {
+            width: 100%;
+            height: 100%;
+            max-width: 300px;
+            max-height: 420px;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.6s;
+            cursor: pointer;
+            position: absolute;
+            border-radius: 1rem; /* Use consistent rounded corners */
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Mobile card stacking */
+        #letter-card-1 {
+            z-index: 3;
+            transform: translateY(0) rotate(2deg);
+            background: linear-gradient(135deg, #fce3ec 0%, #f3e5f5 100%);
+        }
+        #placeholder-1 {
+            z-index: 2;
+            transform: translateY(-5%) rotate(-2deg);
+            background: linear-gradient(135deg, #fffde7 0%, #fff9c4 100%);
+        }
+        #placeholder-2 {
+            z-index: 1;
+            transform: translateY(-10%) rotate(1deg);
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        }
+
+        /* Mobile tap/active effect - brings card to front */
+        .carousel-container .card:active {
+            transform: translateY(-5%) scale(1.05);
+            z-index: 10;
+        }
+
+        /* Back to Home button */
+        .home-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #c3cfe2;
+            color: #2d3a4a;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            z-index: 50;
+            box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+            border: 1px solid #b0bcd6;
+        }
+
+        /* --- Desktop Styles (Applied on larger screens) --- */
+        @media (min-width: 1024px) {
+            /* Rotated header for desktop */
+            .page-header {
+                position: fixed;
+                left: 8%;
+                top: 50%;
+                transform: translateY(-50%);
+                text-align: left;
+                z-index: 50;
+                margin: 0;
+            }
+
+            /* Move carousel to the right to avoid intersection with header */
+            .carousel-container {
+                position: absolute;
+                left: 68%; /* Increased from 60% to move right */
+                top: 50%;
+                transform: translate(-50%, -50%);
+                width: auto;
+                height: auto;
+            }
+
+            /* Fixed card sizes for desktop - now 1.3x larger */
+            .card {
+                width: 416px;
+                height: 585px;
+            }
+
+            /* Fanned-out desktop layout - align left bottom corners on a sloped line */
+            #letter-card-1 {
+                transform: translateX(0) translateY(0) scale(1.2) rotateZ(0deg);
+                z-index: 3;
+            }
+            #placeholder-1 {
+                transform: translateX(-55%) translateY(60px) scale(0.96) rotateZ(-8deg);
+                z-index: 2;
+            }
+            #placeholder-2 {
+                transform: translateX(-110%) translateY(120px) scale(0.77) rotateZ(-16deg);
+                z-index: 1;
+            }
+
+            /* Desktop hover effect - highlights the hovered card and adjusts others */
+            .carousel-container .card:hover {
+                transform: scale(1.25) rotateZ(0) !important;
+                z-index: 30;
+                box-shadow: 0 8px 32px rgba(44,62,80,0.2);
+            }
+
+            .carousel-container:has(#letter-card-1:hover) #placeholder-1 {
+                transform: translateX(-80%) translateY(60px) scale(0.9) rotateZ(-12deg);
+            }
+            .carousel-container:has(#letter-card-1:hover) #placeholder-2 {
+                transform: translateX(-130%) translateY(120px) scale(0.8) rotateZ(-20deg);
+            }
+
+            .carousel-container:has(#placeholder-1:hover) #letter-card-1 {
+                transform: translateX(55%) translateY(0) scale(1) rotateZ(8deg);
+            }
+            .carousel-container:has(#placeholder-1:hover) #placeholder-2 {
+                transform: translateX(-80%) translateY(120px) scale(0.9) rotateZ(-20deg);
+            }
+
+            .carousel-container:has(#placeholder-2:hover) #letter-card-1 {
+                transform: translateX(55%) translateY(0) scale(1) rotateZ(8deg);
+            }
+            .carousel-container:has(#placeholder-2:hover) #placeholder-1 {
+                transform: translateX(0) translateY(60px) scale(0.9) rotateZ(-8deg);
+            }
+        }
+
+        /* ================= Single letter view ================= */
+
+        #letter-view .title-font {
             letter-spacing: 0.04em;
         }
         /* A soft, romantic gradient background */
@@ -53,7 +225,7 @@
             animation: float 18s infinite cubic-bezier(.4,.8,.6,1.2);
             filter: drop-shadow(0 0 6px rgba(255, 105, 180, 0.6));
         }
-        
+
         .main-card {
             z-index: 10;
             position: relative;
@@ -123,44 +295,106 @@
         }
     </style>
 </head>
-<body class="romantic-gradient min-h-screen flex items-center justify-center p-2 sm:p-6">
+<body>
 
-    <!-- Floating hearts in the background -->
-    <div class="hearts-container">
-        <!-- Javascript will generate hearts here -->
+    <!-- ================= Letters collection view ================= -->
+    <div id="letters-view" class="page-gradient min-h-screen flex flex-col justify-center items-center p-4">
+
+        <a href="index.html" class="home-button">Back to Home</a>
+
+        <header class="page-header">
+            <h1 class="title-font text-4xl lg:text-5xl text-gray-700">A Collection of Letters</h1>
+            <p class="text-gray-500 mt-2">For the one who holds my heart.</p>
+        </header>
+
+        <!-- Carousel for the letter collection -->
+        <div class="carousel-container">
+            <!-- Card 3: Placeholder (farthest back) -->
+            <div id="placeholder-2" class="card shadow-lg">
+                <div class="text-center text-gray-500 m-auto">
+                    <p class="title-font text-2xl">Another Memory</p><p>Coming Soon</p>
+                </div>
+            </div>
+            <!-- Card 2: Placeholder (middle) -->
+            <div id="placeholder-1" class="card shadow-xl">
+                <div class="text-center text-gray-500 m-auto">
+                    <p class="title-font text-2xl">A New Chapter</p><p>Coming Soon</p>
+                </div>
+            </div>
+            <!-- Card 1: The Available Letter (front) -->
+            <div id="letter-card-1" class="card shadow-2xl">
+                <div class="text-gray-700">
+                    <h2 class="title-font text-3xl mb-4">A Love Note</h2>
+                    <p class="text-sm leading-relaxed">Amore...</p>
+                </div>
+                <p class="text-pink-800/80 text-right title-font text-xl italic">Click to open</p>
+            </div>
+        </div>
     </div>
 
-    <!-- Main container for the letter -->
-    <div class="main-card">
-        
-        <!-- The content of the letter -->
-        <div class="letter-content space-y-6">
-            <p>Your voice is to my ears what sweet sagar water is to my throat, refreshing after a day of exhaustion.</p>
-            
-            <p>Your kindness is a quiet, deep harbor in a world of stormy seas, where my weary soul has finally found its safe anchor.</p>
-            
-            <p>Your body is a piece of art, more exquisite than the David of Florence, sculpted by God himself.</p>
-            
-            <p>This longing kills me, and the anticipation fills me. They counter each other, never letting one surpass the other, coalescing like opposing notes in a symphony.</p>
-            
-            <p>Life was uncertain and unsteady like the gushing of springs, but now you have become the cornerstone at which the water steadies and laminates.</p>
-            
-            <p>Often I wonder how I even got you; the universe responded to my heart the way rain does to a drought.</p>
-            
-            <p>May this happiness never leave us, and may the Lord Almighty bless us with enough strength to carry this through life’s ebbs and flows.</p>
+    <!-- ================= Single letter view (same URL) ================= -->
+    <div id="letter-view" class="romantic-gradient min-h-screen flex items-center justify-center p-2 sm:p-6" hidden>
+
+        <!-- Floating hearts in the background -->
+        <div class="hearts-container">
+            <!-- Javascript will generate hearts here -->
         </div>
 
-        <!-- Signature -->
-        <div class="mt-12 text-right">
-            <p class="title-font text-2xl italic text-pink-800/80">Love you ever and forever, amore.</p>
+        <!-- Main container for the letter -->
+        <div class="main-card">
+
+            <!-- The content of the letter -->
+            <div class="letter-content space-y-6">
+                <p>Your voice is to my ears what sweet sagar water is to my throat, refreshing after a day of exhaustion.</p>
+
+                <p>Your kindness is a quiet, deep harbor in a world of stormy seas, where my weary soul has finally found its safe anchor.</p>
+
+                <p>Your body is a piece of art, more exquisite than the David of Florence, sculpted by God himself.</p>
+
+                <p>This longing kills me, and the anticipation fills me. They counter each other, never letting one surpass the other, coalescing like opposing notes in a symphony.</p>
+
+                <p>Life was uncertain and unsteady like the gushing of springs, but now you have become the cornerstone at which the water steadies and laminates.</p>
+
+                <p>Often I wonder how I even got you; the universe responded to my heart the way rain does to a drought.</p>
+
+                <p>May this happiness never leave us, and may the Lord Almighty bless us with enough strength to carry this through life’s ebbs and flows.</p>
+            </div>
+
+            <!-- Signature -->
+            <div class="mt-12 text-right">
+                <p class="title-font text-2xl italic text-pink-800/80">Love you ever and forever, amore.</p>
+            </div>
+
         </div>
 
+        <!-- Back to Letters -->
+        <button class="back-button" onclick="history.back()">Back to Letters</button>
     </div>
-
-    <!-- Back to Letters link -->
-    <button class="back-button" onclick="history.back()">Back to Letters</button>
 
     <script>
+        const lettersView = document.getElementById('letters-view');
+        const letterView = document.getElementById('letter-view');
+
+        // Swap between the collection and the open letter without changing the URL
+        function showLetter(open) {
+            lettersView.hidden = open;
+            letterView.hidden = !open;
+            document.body.classList.toggle('reading', open);
+            document.title = open ? 'A Letter for You' : 'A Collection of Letters';
+            window.scrollTo(0, 0);
+        }
+
+        // When the main letter card is clicked, open the letter on this same page.
+        // pushState keeps the URL identical but lets the browser/phone back button close the letter.
+        document.getElementById('letter-card-1').addEventListener('click', () => {
+            history.pushState({ letter: 1 }, '');
+            showLetter(true);
+        });
+
+        window.addEventListener('popstate', (e) => {
+            showLetter(Boolean(e.state && e.state.letter));
+        });
+
         // Script to generate and place hearts randomly
         const heartsContainer = document.querySelector('.hearts-container');
         const heartCount = 20; // Increased heart count for more effect
@@ -169,7 +403,7 @@
             const heart = document.createElement('div');
             heart.classList.add('heart');
             heart.innerHTML = '♥';
-            
+
             // Random size, position, and animation delay
             const size = Math.random() * 40 + 20; // Size between 20px and 60px
             heart.style.fontSize = `${size}px`;
@@ -180,6 +414,9 @@
 
             heartsContainer.appendChild(heart);
         }
+
+        // If the page is reloaded while a letter is open, show it again
+        if (history.state && history.state.letter) showLetter(true);
     </script>
 
 </body>
