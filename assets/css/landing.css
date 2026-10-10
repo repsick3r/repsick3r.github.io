@@ -1,0 +1,219 @@
+/* Landing, gallery and shared colours: a cool, neutral paper with flat coral, blue and green accents */
+:root {
+  --paper: #f4f7f7;
+  --card: #ffffff;
+  --ink: #1f1b16;
+  --muted: #6b6253;
+  --line: #dde4e6;
+  --coral: #ff9a8b;
+  --blue: #8ec5ff;
+  --green: #9be3b8;
+  --accent-ink: #3b6ea8;
+  --serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --gutter: clamp(20px, 5vw, 64px);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ================= Landing =================
+   Just the three sections, as a bar across the top of the page, centred. */
+
+.landing {
+  width: 100%;
+  max-width: 1080px;
+  min-height: 100vh;
+  min-height: 100svh;
+  margin: 0 auto;
+  padding: var(--gutter);
+}
+
+/* Sections: a row of three on wide screens */
+.sections {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: clamp(10px, 1.3vw, 14px) clamp(12px, 1.8vw, 20px);
+  color: inherit;
+  text-decoration: none;
+}
+
+.row + .row {
+  border-left: 1px solid var(--line);
+}
+
+.row:first-child {
+  padding-left: 0;
+}
+
+a.row:hover .label,
+a.row:focus-visible .label {
+  color: var(--accent-ink);
+}
+
+a.row:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: -2px;
+}
+
+.label {
+  display: block;
+  min-width: 0;
+  font-family: var(--serif);
+  font-size: clamp(18px, 1.8vw, 22px);
+  line-height: 1.2;
+}
+
+.arrow {
+  font-size: clamp(17px, 1.7vw, 20px);
+  color: var(--accent-ink);
+  transition: transform 0.25s ease;
+}
+
+a.row:hover .arrow,
+a.row:focus-visible .arrow {
+  transform: translateX(4px);
+  color: var(--ink);
+}
+
+/* GitHub and LinkedIn logos */
+.links {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  color: var(--ink);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.icon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.icon:hover,
+.icon:focus-visible {
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.icon-github:hover,
+.icon-github:focus-visible {
+  color: #181717;
+}
+
+.icon-linkedin:hover,
+.icon-linkedin:focus-visible {
+  color: #0a66c2;
+}
+
+.icon:focus-visible {
+  box-shadow: 0 0 0 2px var(--blue);
+  border-radius: 4px;
+}
+
+/* Tablets and narrow laptops: sections become a list */
+@media (max-width: 860px) {
+  .sections {
+    grid-template-columns: 1fr;
+  }
+  .row,
+  .row:first-child {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+  .row + .row {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrow,
+  .icon,
+  .back-home {
+    transition: none;
+  }
+}
+
+/* ================= Gallery =================
+   Same layout as the original gallery: one column of 150px squares on the left,
+   "Back to Home" in the top-right corner. The page scrolls when the screen is short. */
+
+.gallery-page {
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 64px 20px 24px;
+}
+
+.gallery-col {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.gallery-col a {
+  display: block;
+  line-height: 0;
+  border-radius: 5px;
+}
+
+.gallery-col img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(31, 27, 22, 0.1);
+}
+
+.back-home {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 10px 15px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--card);
+  color: var(--ink);
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.back-home:hover,
+.back-home:focus-visible {
+  color: var(--accent-ink);
+  border-color: var(--blue);
+  outline: none;
+}

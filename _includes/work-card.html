@@ -1,0 +1,8 @@
+{% if include.work.site %}{% assign href = include.work.site %}{% else %}{% capture href %}https://github.com/repsick3r/{{ include.work.repo }}{% endcapture %}{% endif %}
+<a class="card" href="{{ href }}">
+  <h3>{{ include.work.name }}</h3>
+  <p>{{ include.work.description }}</p>
+  <div class="card-meta">
+    {% for tag in include.work.tags %}<span class="tag">{{ tag }}</span>{% endfor %}
+  </div>
+</a>

@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+    <meta name="referrer" content="no-referrer">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>A Collection of Letters</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,10 +26,6 @@
             overflow-x: hidden;
             position: relative;
         }
-        /* While a letter is open, hide scrollbars caused by floating hearts */
-        body.reading {
-            overflow: hidden;
-        }
         .title-font {
             font-family: 'Playfair Display', serif;
         }
@@ -41,7 +42,7 @@
         .page-header {
             position: relative;
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 3.5rem; /* Clear the stacked cards, which rise above the front card */
             margin-top: 4rem; /* Space for the home button */
         }
 
@@ -114,32 +115,37 @@
         }
 
         /* --- Desktop Styles (Applied on larger screens) --- */
-        @media (min-width: 1024px) {
-            /* Rotated header for desktop */
+        /* Below 1280px the stacked mobile layout is used, since the fanned cards need the width. */
+        @media (min-width: 1280px) {
+            /* Header sits in a left column */
             .page-header {
                 position: fixed;
-                left: 8%;
+                left: 56px;
                 top: 50%;
                 transform: translateY(-50%);
+                max-width: 360px;
                 text-align: left;
                 z-index: 50;
                 margin: 0;
             }
 
-            /* Move carousel to the right to avoid intersection with header */
+            /* Card width scales with the screen so the fan never reaches the header
+               or runs off the top and bottom. Everything below is relative to --w. */
             .carousel-container {
+                --w: min(416px, calc((100vw - 540px) / 2.6), calc((100vh - 140px) / 1.9));
                 position: absolute;
-                left: 68%; /* Increased from 60% to move right */
+                left: calc(100% - 56px - var(--w) * 0.65);
                 top: 50%;
                 transform: translate(-50%, -50%);
                 width: auto;
                 height: auto;
             }
 
-            /* Fixed card sizes for desktop - now 1.3x larger */
             .card {
-                width: 416px;
-                height: 585px;
+                width: var(--w);
+                height: calc(var(--w) * 1.406);
+                max-width: none;
+                max-height: none;
             }
 
             /* Fanned-out desktop layout - align left bottom corners on a sloped line */
@@ -148,11 +154,11 @@
                 z-index: 3;
             }
             #placeholder-1 {
-                transform: translateX(-55%) translateY(60px) scale(0.96) rotateZ(-8deg);
+                transform: translateX(-55%) translateY(calc(var(--w) * 0.144)) scale(0.96) rotateZ(-8deg);
                 z-index: 2;
             }
             #placeholder-2 {
-                transform: translateX(-110%) translateY(120px) scale(0.77) rotateZ(-16deg);
+                transform: translateX(-110%) translateY(calc(var(--w) * 0.288)) scale(0.77) rotateZ(-16deg);
                 z-index: 1;
             }
 
@@ -164,29 +170,33 @@
             }
 
             .carousel-container:has(#letter-card-1:hover) #placeholder-1 {
-                transform: translateX(-80%) translateY(60px) scale(0.9) rotateZ(-12deg);
+                transform: translateX(-80%) translateY(calc(var(--w) * 0.144)) scale(0.9) rotateZ(-12deg);
             }
             .carousel-container:has(#letter-card-1:hover) #placeholder-2 {
-                transform: translateX(-130%) translateY(120px) scale(0.8) rotateZ(-20deg);
+                transform: translateX(-130%) translateY(calc(var(--w) * 0.288)) scale(0.8) rotateZ(-20deg);
             }
 
             .carousel-container:has(#placeholder-1:hover) #letter-card-1 {
                 transform: translateX(55%) translateY(0) scale(1) rotateZ(8deg);
             }
             .carousel-container:has(#placeholder-1:hover) #placeholder-2 {
-                transform: translateX(-80%) translateY(120px) scale(0.9) rotateZ(-20deg);
+                transform: translateX(-80%) translateY(calc(var(--w) * 0.288)) scale(0.9) rotateZ(-20deg);
             }
 
             .carousel-container:has(#placeholder-2:hover) #letter-card-1 {
                 transform: translateX(55%) translateY(0) scale(1) rotateZ(8deg);
             }
             .carousel-container:has(#placeholder-2:hover) #placeholder-1 {
-                transform: translateX(0) translateY(60px) scale(0.9) rotateZ(-8deg);
+                transform: translateX(0) translateY(calc(var(--w) * 0.144)) scale(0.9) rotateZ(-8deg);
             }
         }
 
         /* ================= Single letter view ================= */
 
+        #letter-view {
+            position: relative;
+            overflow: hidden; /* Keep the floating hearts from adding scrollbars */
+        }
         #letter-view .title-font {
             letter-spacing: 0.04em;
         }
@@ -271,9 +281,9 @@
 
         @media (max-width: 900px) {
             .main-card {
-                max-width: 98vw;
-                width: 98vw;
-                padding: 1.2rem 0.5rem;
+                max-width: 100%;
+                width: 100%;
+                padding: 2rem 1.5rem;
             }
             .letter-content {
                 font-size: 1.2rem;
@@ -281,10 +291,13 @@
             }
         }
         @media (max-width: 600px) {
+            #letter-view {
+                padding-top: 4rem; /* Room for the back button above the letter */
+            }
             .main-card {
-                max-width: 100vw;
-                width: 100vw;
-                padding: 0.7rem 0.2rem;
+                max-width: 100%;
+                width: 100%;
+                padding: 1.4rem 1rem;
                 clip-path: polygon(0% 1%, 10% 0%, 20% 1%, 30% 0%, 40% 1%, 50% 0%, 60% 1%, 70% 0%, 80% 1%, 90% 0%, 100% 1%, 100% 99%, 90% 100%, 80% 99%, 70% 100%, 60% 99%, 50% 100%, 40% 99%, 30% 100%, 20% 99%, 10% 100%, 0% 99%);
                 transform: rotate(0deg); /* Reset rotation on mobile */
             }
@@ -303,7 +316,7 @@
         <a href="index.html" class="home-button">Back to Home</a>
 
         <header class="page-header">
-            <h1 class="title-font text-4xl lg:text-5xl text-gray-700">A Collection of Letters</h1>
+            <h1 class="title-font text-4xl xl:text-5xl text-gray-700">A Collection of Letters</h1>
             <p class="text-gray-500 mt-2">For the one who holds my heart.</p>
         </header>
 
@@ -379,7 +392,6 @@
         function showLetter(open) {
             lettersView.hidden = open;
             letterView.hidden = !open;
-            document.body.classList.toggle('reading', open);
             document.title = open ? 'A Letter for You' : 'A Collection of Letters';
             window.scrollTo(0, 0);
         }

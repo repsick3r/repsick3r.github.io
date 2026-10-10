@@ -1,0 +1,18 @@
+# Projects shown on the Stuff page. Each card links to the project's site, or to its code when it has no site.
+- name: Design
+  repo: design
+  site: /design/
+  description: Design patterns from Head First Design Patterns, worked through in Java, with notes on the OO principles behind each one.
+  tags: [Java, LLD]
+
+- name: Compiler Design Lab
+  repo: CSE425_Compiler_Design_Lab
+  site: /CSE425_Compiler_Design_Lab/
+  description: Seven labs from the IIT (BHU) compiler course, from gcc's intermediate files to lexers and LL and LR parsers.
+  tags: [C++, LEX, YACC]
+
+- name: Kamikaze
+  repo: kamikaze
+  site: /kamikaze/
+  description: A Django site that predicts institutes and branches from previous years' JoSAA cutoffs, with a discussion forum.
+  tags: [Django, Python]

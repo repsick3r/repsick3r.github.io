@@ -1,0 +1,15 @@
+theme: jekyll-theme-primer
+
+plugins:
+  - jekyll-relative-links
+
+title: Repala Sudhamsh
+description: Projects, notes and pictures by Repala Sudhamsh.
+
+# Pages without front matter (like plain .html files) are copied as they are.
+exclude:
+  - README.md
+  - LICENSE
+  - Gemfile
+  - Gemfile.lock
+  - vendor

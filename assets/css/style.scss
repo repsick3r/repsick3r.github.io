@@ -1,0 +1,185 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+// Same cool paper background and flat accents as the landing page,
+// on top of the design repo's Primer theme
+$paper: #f4f7f7;
+$card: #ffffff;
+$ink: #1f1b16;
+$muted: #6b6253;
+$line: #dde4e6;
+$tag: #e9eef0;
+$accent-ink: #3b6ea8;
+$coral: #ff9a8b;
+$blue: #8ec5ff;
+$green: #9be3b8;
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: $paper;
+  color: $ink;
+}
+
+.container-lg {
+  max-width: 1012px;
+}
+
+@media (max-width: 543px) {
+  .container-lg.my-5 {
+    margin-top: 16px !important;
+    margin-bottom: 24px !important;
+  }
+}
+
+.markdown-body {
+  color: $ink;
+}
+
+.markdown-body a {
+  color: $accent-ink;
+}
+
+.markdown-body h1,
+.markdown-body h2 {
+  border-bottom-color: $line;
+}
+
+.markdown-body hr {
+  background-color: $line;
+}
+
+.footer {
+  border-color: $line !important;
+  color: $muted !important;
+}
+
+// Numbered headings and code chips, as in the design repo
+.markdown-body code {
+  word-break: break-word;
+}
+
+.markdown-body h6 {
+  color: $ink;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-top: 28px;
+}
+
+.markdown-body h6 code {
+  padding: 3px 8px;
+  font-size: 13px;
+  line-height: 1.9;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.markdown-body a code {
+  background: $card;
+  border: 1px solid $line;
+  color: $ink;
+  font-size: 13px;
+  padding: 3px 10px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.markdown-body a:hover code,
+.markdown-body a:focus code {
+  color: $accent-ink;
+  border-color: $blue;
+}
+
+.markdown-body div.highlighter-rouge pre {
+  background: $tag;
+  border-left: 4px solid $blue;
+}
+
+.markdown-body div.highlighter-rouge.quote pre,
+.markdown-body div.highlighter-rouge.quote code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.markdown-body div.highlighter-rouge.quote code {
+  background: transparent;
+}
+
+.markdown-body img {
+  max-width: 100%;
+  height: auto;
+}
+
+
+// ================= Project cards =================
+
+.markdown-body .cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px;
+  margin: 16px 0 24px;
+}
+
+@media (max-width: 600px) {
+  .markdown-body .cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.markdown-body .card {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 18px;
+  border: 1px solid $line;
+  border-radius: 8px;
+  background: $card;
+  color: $ink;
+  text-decoration: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:hover,
+  &:focus-visible {
+    border-color: $blue;
+    box-shadow: 0 6px 18px rgba(31, 27, 22, 0.06);
+    text-decoration: none;
+    outline: none;
+  }
+
+  &:hover h3,
+  &:focus-visible h3 {
+    color: $accent-ink;
+  }
+
+  h3 {
+    margin: 0 0 6px !important;
+    color: $ink;
+    font-size: 17px;
+  }
+
+  p {
+    flex: 1;
+    margin: 0 0 12px !important;
+    color: $muted;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+}
+
+.card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.tag {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: $tag;
+  color: $muted;
+  font-size: 12px;
+}
