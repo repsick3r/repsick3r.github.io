@@ -1004,8 +1004,8 @@
             curtains.blur();
         });
 
-        // With a mouse, moving the cursor out past the middle of the stage draws that side's
-        // curtain closed, more the further out it goes; fully closed at the very edge.
+        // With a mouse, moving the cursor out past the middle of the stage toward either edge draws
+        // both curtains closed together, more the further out it goes; fully closed at the very edge.
         const hoverCurtains = window.matchMedia('(hover: hover) and (pointer: fine)').matches && !reduceMotion;
         if (hoverCurtains) {
             const drapeL = curtains.querySelector('.drape-left');
@@ -1059,7 +1059,9 @@
                 const W = window.innerWidth;
                 const zone = W * 0.505 * tied() + 48; // the drape plus a little margin; the middle is left alone
                 const pull = (dist) => dist >= zone ? 0 : Math.pow((zone - dist) / zone, 1.3);
-                target = { l: pull(e.clientX), r: pull(W - e.clientX) };
+                // Whichever edge the cursor nears, both curtains draw in together by the same amount
+                const amount = Math.max(pull(e.clientX), pull(W - e.clientX));
+                target = { l: amount, r: amount };
                 kick();
             });
             document.addEventListener('mouseout', (e) => {
