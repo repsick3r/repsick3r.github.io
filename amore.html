@@ -30,10 +30,36 @@
             font-family: 'Playfair Display', serif;
         }
 
-        /* ================= Letters collection view ================= */
+        /* ================= Letters collection view: a small stage ================= */
 
+        :root {
+            --tied: 0.16;                          /* how far the curtains gather when tied back */
+            --drape-w: calc(50.5vw * var(--tied)); /* width of each tied-back drape */
+            --valance: clamp(34px, 6vh, 56px);     /* height of the pelmet across the top */
+            --spot-x: 50%;
+            --spot-y: 52%;
+        }
+        @media (min-width: 1280px) {
+            :root {
+                --tied: 0.2;
+                --spot-x: 64%;
+                --spot-y: 50%;
+            }
+        }
+
+        /* Dusky rose stage with a soft spotlight where the letters sit */
         .page-gradient {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background:
+                radial-gradient(ellipse 55% 50% at var(--spot-x) var(--spot-y), rgba(255, 245, 248, 0.9) 0%, rgba(255, 245, 248, 0.35) 45%, rgba(255, 245, 248, 0) 75%),
+                linear-gradient(180deg, #e9c7d0 0%, #ddafbd 55%, #c98ea2 100%);
+            padding-left: calc(var(--drape-w) + 12px) !important;
+            padding-right: calc(var(--drape-w) + 12px) !important;
+        }
+        .page-header h1 {
+            color: #4a2433;
+        }
+        .page-header p {
+            color: #7a4757;
         }
 
         /* --- Mobile First Styles --- */
@@ -43,13 +69,13 @@
             position: relative;
             text-align: center;
             margin-bottom: 0.5rem;
-            margin-top: 4rem; /* Space for the home button */
+            margin-top: calc(var(--valance) * 1.6 + 1.5rem); /* clear the pelmet across the top */
         }
 
         /* Fanned card carousel, used at every screen size. Its geometry comes from
            the variables below; phones and tablets get a tighter fan that fits the width. */
         .carousel-container {
-            --w: min(320px, calc((100vw - 24px) / 2.2), calc((100svh - 240px) / 2.05)); /* card width */
+            --w: min(320px, calc((100vw - var(--drape-w) * 2 - 24px) / 2.2), calc((100svh - 260px - var(--valance)) / 2.05)); /* card width */
             --x1: -30%;   --r1: -6deg;   /* middle card offset and tilt */
             --x2: -60%;   --r2: -12deg;  /* back card offset and tilt */
             --x1h: -45%;  --x2h: -85%;   /* where they slide to while the front card is focused */
@@ -81,25 +107,24 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Phones and tablets: card text and padding follow the smaller card size.
-           Laptops keep the original sizes. */
+        /* Phones and tablets: envelope text and padding follow the smaller card size.
+           Laptops keep the full sizes. */
         @media (max-width: 1279px) {
-            .card {
+            .carousel-container .card {
                 padding: clamp(0.75rem, calc(var(--w) * 0.06), 1.5rem);
             }
-            .card h2 {
-                font-size: clamp(1.125rem, calc(var(--w) * 0.075), 1.875rem);
-                margin-bottom: clamp(0.5rem, calc(var(--w) * 0.04), 1rem);
+            .carousel-container .card .env-title {
+                font-size: clamp(0.8rem, calc(var(--w) * 0.105), 1.875rem);
             }
-            .card .text-2xl {
-                font-size: clamp(1rem, calc(var(--w) * 0.06), 1.5rem);
+            .carousel-container .card:not(#letter-card-1) .env-title {
+                font-size: clamp(0.7rem, calc(var(--w) * 0.085), 1.5rem);
             }
-            .card .text-xl {
-                font-size: clamp(0.95rem, calc(var(--w) * 0.05), 1.25rem);
+            .carousel-container .card .env-sub {
+                font-size: clamp(0.72rem, calc(var(--w) * 0.034), 0.875rem);
             }
-            .card .text-sm,
-            .card .m-auto > p:last-child {
-                font-size: clamp(0.75rem, calc(var(--w) * 0.034), 0.875rem);
+            .carousel-container .card .env-hint {
+                margin-top: clamp(0.25rem, calc(var(--w) * 0.03), 0.75rem);
+                font-size: clamp(0.78rem, calc(var(--w) * 0.07), 1.25rem);
             }
         }
 
@@ -107,17 +132,105 @@
         #letter-card-1 {
             z-index: 3;
             transform: translateX(0) translateY(0) scale(1.2) rotateZ(0deg);
-            background: linear-gradient(135deg, #fce3ec 0%, #f3e5f5 100%);
+            --paper: #fdf3f1;  --flap: #f5d9df;  --fold: #f8e4e7;  --seal: #b23a5e;
         }
         #placeholder-1 {
             z-index: 2;
             transform: translateX(var(--x1)) translateY(calc(var(--w) * 0.144)) scale(0.96) rotateZ(var(--r1));
-            background: linear-gradient(135deg, #fffde7 0%, #fff9c4 100%);
+            --paper: #fdf8ea;  --flap: #f1e5c4;  --fold: #f6edd6;  --seal: #c39a45;
         }
         #placeholder-2 {
             z-index: 1;
             transform: translateX(var(--x2)) translateY(calc(var(--w) * 0.288)) scale(0.77) rotateZ(var(--r2));
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            --paper: #f2f7ef;  --flap: #d9e8d4;  --fold: #e6f0e2;  --seal: #6f9a7a;
+        }
+
+        /* Envelopes: paper body, folded bottom, a top flap and a wax heart seal */
+        .card {
+            background:
+                linear-gradient(160deg, rgba(255,255,255,0.55), rgba(255,255,255,0) 40%),
+                var(--paper);
+            border-radius: 10px;
+            overflow: hidden;
+            justify-content: flex-end;
+            box-shadow: 0 10px 28px rgba(74, 36, 51, 0.18), 0 2px 6px rgba(74, 36, 51, 0.12) !important;
+        }
+        .card .fold {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 62%;
+            background: var(--fold);
+            clip-path: polygon(0 100%, 0 14%, 50% 58%, 100% 14%, 100% 100%);
+        }
+        .card .flap-wrap {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 42%;
+            filter: drop-shadow(0 3px 3px rgba(74, 36, 51, 0.14));
+        }
+        .card .flap {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, var(--flap), color-mix(in srgb, var(--flap) 80%, #ffffff));
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+        }
+        .card .seal {
+            position: absolute;
+            left: 50%;
+            top: 42%;
+            width: calc(var(--w) * 0.2);
+            height: calc(var(--w) * 0.2);
+            transform: translate(-50%, -50%);
+            border-radius: 47% 53% 50% 50% / 52% 48% 52% 48%;
+            background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--seal) 60%, #ffffff) 0%, var(--seal) 45%, color-mix(in srgb, var(--seal) 70%, #000000) 100%);
+            box-shadow:
+                inset 0 0 0 calc(var(--w) * 0.016) rgba(0, 0, 0, 0.12),
+                0 2px 4px rgba(74, 36, 51, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: calc(var(--w) * 0.09);
+            line-height: 1;
+            z-index: 2;
+        }
+        .card .env-text {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: #4a2433;
+        }
+        .card .env-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.875rem;
+            line-height: 1.15;
+            margin: 0 0 0.35rem;
+            white-space: nowrap;
+        }
+        .card .env-sub {
+            font-size: 0.875rem;
+            color: #7a4757;
+        }
+        .card .env-hint {
+            margin-top: 0.75rem;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.25rem;
+            color: #a03a5b;
+        }
+        .card:not(#letter-card-1) .env-title {
+            font-size: 1.5rem;
+            color: #5a4a4f;
+        }
+        .hint-touch { display: none; }
+        @media (hover: none) {
+            .hint-mouse { display: none; }
+            .hint-touch { display: inline; }
         }
 
         /* Mouse: hovering a card brings it forward and fans the others out */
@@ -168,28 +281,13 @@
             transform: translateX(0) translateY(calc(var(--w) * 0.144)) scale(0.9) rotateZ(var(--r1));
         }
 
-        /* Back to Home button */
-        .home-button {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: #c3cfe2;
-            color: #2d3a4a;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            z-index: 50;
-            box-shadow: 0 2px 8px rgba(44,62,80,0.08);
-            border: 1px solid #b0bcd6;
-        }
-
         /* --- Desktop Styles (Applied on larger screens) --- */
         /* From 1280px the heading moves to a left column and the fan opens wider on the right. */
         @media (min-width: 1280px) {
             /* Header sits in a left column */
             .page-header {
                 position: fixed;
-                left: 56px;
+                left: calc(var(--drape-w) + 40px);
                 top: 50%;
                 transform: translateY(-50%);
                 max-width: 360px;
@@ -201,13 +299,13 @@
             /* Card width scales with the screen so the fan never reaches the header
                or runs off the top and bottom. */
             .carousel-container {
-                --w: min(416px, calc((100vw - 540px) / 2.6), calc((100vh - 140px) / 1.9));
+                --w: min(416px, calc((100vw - 540px - var(--drape-w) * 2) / 2.6), calc((100vh - 140px - var(--valance)) / 1.9));
                 --x1: -55%;   --r1: -8deg;
                 --x2: -110%;  --r2: -16deg;
                 --x1h: -80%;  --x2h: -130%;
                 --fx: 55%;
                 position: absolute;
-                left: calc(100% - 56px - var(--w) * 0.65);
+                left: calc(100% - var(--drape-w) - 40px - var(--w) * 0.65);
                 top: 50%;
                 transform: translate(-50%, -50%);
                 width: auto;
@@ -215,12 +313,181 @@
             }
         }
 
+        /* ================= Curtains =================
+           The page opens behind closed velvet curtains. One tap sweeps them apart, starts the
+           music (browsers only allow sound after a tap) and leaves them tied back at the edges
+           of the stage, under a pelmet with a gold trim. */
+        .curtains {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: block;
+            width: 100%;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .curtains.is-open {
+            pointer-events: none;
+            cursor: default;
+        }
+
+        /* Velvet: two fold patterns with different widths, so the folds never look evenly striped */
+        .drape {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 50.5%;
+            background:
+                linear-gradient(180deg, rgba(255, 236, 242, 0.10) 0%, rgba(0, 0, 0, 0) 30%, rgba(46, 6, 22, 0.30) 100%),
+                repeating-linear-gradient(90deg,
+                    rgba(255, 228, 237, 0) 0px, rgba(255, 228, 237, 0.26) 21px, rgba(255, 228, 237, 0.04) 38px,
+                    rgba(46, 6, 22, 0.34) 57px, rgba(46, 6, 22, 0.10) 70px, rgba(255, 228, 237, 0) 79px),
+                repeating-linear-gradient(90deg,
+                    rgba(46, 6, 22, 0) 0px, rgba(46, 6, 22, 0.20) 41px, rgba(255, 228, 237, 0.14) 77px, rgba(46, 6, 22, 0) 113px),
+                #b44d6c;
+            transition:
+                transform 1.9s cubic-bezier(0.62, 0, 0.28, 1),
+                clip-path 1.9s cubic-bezier(0.62, 0, 0.28, 1);
+            will-change: transform;
+        }
+        .drape-left {
+            left: 0;
+            transform-origin: left center;
+            clip-path: polygon(0 0, 100% 0%, 100% 8%, 100% 16%, 100% 24%, 100% 32%, 100% 40%, 100% 48%, 100% 56%, 100% 64%, 100% 72%, 100% 80%, 100% 88%, 100% 96%, 100% 100%, 0 100%);
+            box-shadow: inset -22px 0 34px -14px rgba(46, 6, 22, 0.55);
+        }
+        .drape-right {
+            right: 0;
+            transform-origin: right center;
+            clip-path: polygon(100% 0, 0 0%, 0 8%, 0 16%, 0 24%, 0 32%, 0 40%, 0 48%, 0 56%, 0 64%, 0 72%, 0 80%, 0 88%, 0 96%, 0 100%, 100% 100%);
+            box-shadow: inset 22px 0 34px -14px rgba(46, 6, 22, 0.55);
+        }
+        /* Tied back: gathered to the side and pinched in at the tieback */
+        .curtains.is-open .drape-left {
+            transform: scaleX(var(--tied));
+            clip-path: polygon(0 0, 100.0% 0%, 94.4% 8%, 83.7% 16%, 70.9% 24%, 58.2% 32%, 47.5% 40%, 40.5% 48%, 38.0% 56%, 45.4% 64%, 55.5% 72%, 67.1% 80%, 79.6% 88%, 93.0% 96%, 100.0% 100%, 0 100%);
+        }
+        .curtains.is-open .drape-right {
+            transform: scaleX(var(--tied));
+            clip-path: polygon(100% 0, 0.0% 0%, 5.6% 8%, 16.3% 16%, 29.1% 24%, 41.8% 32%, 52.5% 40%, 59.5% 48%, 62.0% 56%, 54.6% 64%, 44.5% 72%, 32.9% 80%, 20.4% 88%, 7.0% 96%, 0.0% 100%, 100% 100%);
+        }
+
+        /* Gold tiebacks with a tassel, appearing once the drapes are gathered */
+        .tieback {
+            position: absolute;
+            top: 56%;
+            width: clamp(26px, 3.2vw, 40px);
+            height: clamp(9px, 1.1vw, 13px);
+            margin-top: -6px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, #f3d57e 0%, #d4a43c 55%, #a97b22 100%);
+            box-shadow: 0 2px 4px rgba(46, 6, 22, 0.35);
+            opacity: 0;
+            transition: opacity 0.6s ease 1.5s;
+            z-index: 3;
+        }
+        .tieback::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 80%;
+            width: 34%;
+            height: clamp(18px, 2.4vw, 28px);
+            transform: translateX(-50%);
+            border-radius: 40% 40% 30% 30% / 20% 20% 60% 60%;
+            background: repeating-linear-gradient(90deg, #e4bb57 0 2px, #b88a2b 2px 3px);
+        }
+        .tieback-left  { left:  calc(var(--drape-w) * 0.38 - clamp(13px, 1.6vw, 20px)); }
+        .tieback-right { right: calc(var(--drape-w) * 0.38 - clamp(13px, 1.6vw, 20px)); }
+        .curtains.is-open .tieback { opacity: 1; }
+
+        /* Pelmet across the top: velvet band, gold trim and soft swags below */
+        .valance {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--valance);
+            z-index: 2;
+            background:
+                linear-gradient(180deg, rgba(255, 236, 242, 0.12), rgba(46, 6, 22, 0.25)),
+                repeating-linear-gradient(90deg, rgba(46, 6, 22, 0) 0 9px, rgba(46, 6, 22, 0.16) 14px, rgba(46, 6, 22, 0) 19px),
+                #a8435f;
+            border-bottom: 3px solid #d4a43c;
+            box-shadow: 0 1px 0 #f3d57e inset, 0 4px 10px rgba(46, 6, 22, 0.25);
+        }
+        .valance::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 100%;
+            height: calc(var(--valance) * 0.6);
+            background:
+                radial-gradient(ellipse 50% 100% at 50% 0%, #b44d6c 0%, #a0405c 66%, rgba(160, 64, 92, 0) 67.5%)
+                0 0 / clamp(110px, 14vw, 180px) 100% repeat-x;
+            filter: drop-shadow(0 3px 3px rgba(46, 6, 22, 0.25));
+        }
+
+        /* "Tap to open" in the middle of the closed curtains */
+        .curtains-prompt {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            text-align: center;
+            color: #fff6f9;
+            text-shadow: 0 2px 12px rgba(46, 6, 22, 0.5);
+            padding: 0 1.5rem;
+            white-space: nowrap;
+            transition: opacity 0.5s ease;
+        }
+        .curtains-prompt .heart-mark {
+            display: block;
+            font-size: clamp(28px, 6vw, 40px);
+            line-height: 1;
+            margin-bottom: 0.75rem;
+        }
+        .curtains-prompt .tap {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: clamp(1.4rem, 4.5vw, 2rem);
+            letter-spacing: 0.02em;
+        }
+        .curtains-prompt .tap::after {
+            content: "";
+            display: block;
+            width: 48px;
+            height: 1px;
+            margin: 0.9rem auto 0;
+            background: rgba(255, 246, 249, 0.7);
+            animation: curtain-breathe 2.4s ease-in-out infinite;
+        }
+        @keyframes curtain-breathe {
+            0%, 100% { opacity: 0.35; transform: scaleX(0.6); }
+            50% { opacity: 1; transform: scaleX(1); }
+        }
+        .curtains.is-open .curtains-prompt { opacity: 0; }
+
+        /* The stage dressing belongs to the collection, not the open letter */
+        body.reading .curtains { display: none; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .drape, .tieback, .curtains-prompt { transition: none; }
+            .curtains-prompt .tap::after { animation: none; }
+        }
+
         /* Music toggle: small round button in the bottom-right corner */
         .music-toggle {
             position: fixed;
             right: max(1rem, env(safe-area-inset-right));
             bottom: max(1rem, env(safe-area-inset-bottom));
-            z-index: 60;
+            z-index: 110; /* above the tied-back drapes */
             width: 44px;
             height: 44px;
             border-radius: 50%;
@@ -235,6 +502,12 @@
             box-shadow: 0 2px 8px rgba(44,62,80,0.08);
             transition: opacity 0.2s, transform 0.2s;
             -webkit-tap-highlight-color: transparent;
+        }
+        body:not(.reading) .music-toggle {
+            background: #fdf3f1;
+            color: #a03a5b;
+            border-color: rgba(160, 58, 91, 0.25);
+            box-shadow: 0 2px 8px rgba(74, 36, 51, 0.15);
         }
         body.reading .music-toggle {
             background: #ffe4ec;
@@ -390,10 +663,21 @@
 </head>
 <body>
 
+    <!-- Closed curtains; a tap opens them and starts the music -->
+    <button id="curtains" class="curtains" type="button" aria-label="Open the curtains">
+        <span class="drape drape-left" aria-hidden="true"></span>
+        <span class="drape drape-right" aria-hidden="true"></span>
+        <span class="tieback tieback-left" aria-hidden="true"></span>
+        <span class="tieback tieback-right" aria-hidden="true"></span>
+        <span class="valance" aria-hidden="true"></span>
+        <span class="curtains-prompt" aria-hidden="true">
+            <span class="heart-mark">♥</span>
+            <span class="tap">Tap to open</span>
+        </span>
+    </button>
+
     <!-- ================= Letters collection view ================= -->
     <div id="letters-view" class="page-gradient min-h-screen flex flex-col justify-center items-center p-4">
-
-        <a href="index.html" class="home-button">Back to Home</a>
 
         <header class="page-header">
             <h1 class="title-font text-4xl xl:text-5xl text-gray-700">A Collection of Letters</h1>
@@ -404,23 +688,32 @@
         <div class="carousel-container">
             <!-- Card 3: Placeholder (farthest back) -->
             <div id="placeholder-2" class="card shadow-lg">
-                <div class="text-center text-gray-500 m-auto">
-                    <p class="title-font text-2xl">Another Memory</p><p>Coming Soon</p>
+                <span class="fold" aria-hidden="true"></span>
+                <span class="flap-wrap" aria-hidden="true"><span class="flap"></span></span>
+                <span class="seal" aria-hidden="true">♥</span>
+                <div class="env-text">
+                    <p class="env-title">Another Memory</p><p class="env-sub">Coming Soon</p>
                 </div>
             </div>
             <!-- Card 2: Placeholder (middle) -->
             <div id="placeholder-1" class="card shadow-xl">
-                <div class="text-center text-gray-500 m-auto">
-                    <p class="title-font text-2xl">A New Chapter</p><p>Coming Soon</p>
+                <span class="fold" aria-hidden="true"></span>
+                <span class="flap-wrap" aria-hidden="true"><span class="flap"></span></span>
+                <span class="seal" aria-hidden="true">♥</span>
+                <div class="env-text">
+                    <p class="env-title">A New Chapter</p><p class="env-sub">Coming Soon</p>
                 </div>
             </div>
             <!-- Card 1: The Available Letter (front) -->
             <div id="letter-card-1" class="card shadow-2xl">
-                <div class="text-gray-700">
-                    <h2 class="title-font text-3xl mb-4">A Love Note</h2>
-                    <p class="text-sm leading-relaxed">Amore...</p>
+                <span class="fold" aria-hidden="true"></span>
+                <span class="flap-wrap" aria-hidden="true"><span class="flap"></span></span>
+                <span class="seal" aria-hidden="true">♥</span>
+                <div class="env-text">
+                    <h2 class="env-title">A Love Note</h2>
+                    <p class="env-sub">Amore...</p>
+                    <p class="env-hint"><span class="hint-mouse">Click to open</span><span class="hint-touch">Tap to open</span></p>
                 </div>
-                <p class="text-pink-800/80 text-right title-font text-xl italic">Click to open</p>
             </div>
         </div>
     </div>
@@ -581,6 +874,18 @@
                 playMusic();
             }
         });
+
+        // Curtains: the tap that opens them also starts the music (via the first-interaction listener above)
+        const curtains = document.getElementById('curtains');
+        curtains.addEventListener('click', () => {
+            if (curtains.classList.contains('is-open')) return;
+            curtains.classList.add('is-open');
+            // The drapes stay on as stage dressing, but out of the way of taps and screen readers
+            curtains.setAttribute('aria-hidden', 'true');
+            curtains.tabIndex = -1;
+            curtains.blur();
+        });
+        curtains.focus({ preventScroll: true });
 
         // Script to generate and place hearts randomly
         const heartsContainer = document.querySelector('.hearts-container');
