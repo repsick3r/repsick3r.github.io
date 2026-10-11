@@ -156,6 +156,7 @@
             box-shadow: 0 10px 28px rgba(74, 36, 51, 0.18), 0 2px 6px rgba(74, 36, 51, 0.12) !important;
         }
         .card .fold {
+            z-index: 2;
             position: absolute;
             left: 0;
             right: 0;
@@ -165,6 +166,9 @@
             clip-path: polygon(0 100%, 0 14%, 50% 58%, 100% 14%, 100% 100%);
         }
         .card .flap-wrap {
+            z-index: 3;
+            transform-origin: 50% 0;
+            transition: transform 0.6s cubic-bezier(0.55, 0, 0.35, 1);
             position: absolute;
             left: 0;
             right: 0;
@@ -197,11 +201,105 @@
             color: rgba(255, 255, 255, 0.85);
             font-size: calc(var(--w) * 0.09);
             line-height: 1;
-            z-index: 2;
+            z-index: 5;
+            transition: transform 0.35s ease, opacity 0.35s ease;
+        }
+
+        /* The letter inside the envelope, seen only while it opens */
+        .card .peek {
+            position: absolute;
+            left: 9%;
+            right: 9%;
+            top: 8%;
+            height: 74%;
+            z-index: 1;
+            opacity: 0;
+            border-radius: 4px;
+            background:
+                repeating-linear-gradient(180deg, rgba(0,0,0,0) 0 calc(var(--w) * 0.07), rgba(160, 58, 91, 0.13) calc(var(--w) * 0.07) calc(var(--w) * 0.074)),
+                #faf6f8;
+            background-position: 0 calc(var(--w) * 0.12);
+            box-shadow: 0 2px 8px rgba(74, 36, 51, 0.15);
+        }
+
+        /* Opening a letter: the seal pops, the flap folds back, the letter rises out */
+        .card.opening {
+            overflow: visible;
+        }
+        .card.opening .seal {
+            transform: translate(-50%, -50%) scale(1.5);
+            opacity: 0;
+        }
+        .card.opening .env-text {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .card.opening .flap-wrap {
+            transform: perspective(700px) rotateX(180deg);
+            transition-delay: 0.2s;
+        }
+        .card.opening .peek {
+            animation: peek-rise 0.9s cubic-bezier(0.3, 0.7, 0.3, 1) 0.55s forwards;
+        }
+        @keyframes peek-rise {
+            0%   { opacity: 1; transform: translateY(0);    z-index: 1; }
+            30%  { opacity: 1;                             z-index: 1; }
+            31%  {                                          z-index: 6; }
+            100% { opacity: 1; transform: translateY(-58%); z-index: 6; }
+        }
+
+        /* Stage fades away, letter rises in */
+        #letters-view {
+            transition: opacity 0.5s ease;
+        }
+        #letters-view.leaving {
+            opacity: 0;
+        }
+        #letters-view:not([hidden]) .page-header,
+        #letters-view:not([hidden]) .carousel-container {
+            animation: stage-in 0.6s ease both;
+        }
+        @keyframes stage-in {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        #letter-view:not([hidden]) .main-card {
+            animation: letter-in 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+        }
+        @keyframes letter-in {
+            from { opacity: 0; translate: 0 48px; scale: 0.96; }
+            to   { opacity: 1; translate: 0 0;    scale: 1; }
+        }
+        #letter-view:not([hidden]) .letter-content > p,
+        #letter-view:not([hidden]) .main-card > .mt-12 {
+            animation: line-in 0.8s ease both;
+        }
+        #letter-view:not([hidden]) .letter-content > p:nth-child(1) { animation-delay: 0.45s; }
+        #letter-view:not([hidden]) .letter-content > p:nth-child(2) { animation-delay: 0.6s; }
+        #letter-view:not([hidden]) .letter-content > p:nth-child(3) { animation-delay: 0.75s; }
+        #letter-view:not([hidden]) .letter-content > p:nth-child(4) { animation-delay: 0.9s; }
+        #letter-view:not([hidden]) .letter-content > p:nth-child(5) { animation-delay: 1.05s; }
+        #letter-view:not([hidden]) .letter-content > p:nth-child(6) { animation-delay: 1.2s; }
+        #letter-view:not([hidden]) .letter-content > p:nth-child(7) { animation-delay: 1.35s; }
+        #letter-view:not([hidden]) .main-card > .mt-12 { animation-delay: 1.6s; }
+        @keyframes line-in {
+            from { opacity: 0; translate: 0 10px; }
+            to   { opacity: 1; translate: 0 0; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .card.opening .peek,
+            #letters-view:not([hidden]) .page-header,
+            #letters-view:not([hidden]) .carousel-container,
+            #letter-view:not([hidden]) .main-card,
+            #letter-view:not([hidden]) .letter-content > p,
+            #letter-view:not([hidden]) .main-card > .mt-12 {
+                animation: none;
+            }
+            .card .flap-wrap, .card .seal, #letters-view { transition: none; }
         }
         .card .env-text {
             position: relative;
-            z-index: 1;
+            z-index: 4;
             text-align: center;
             color: #4a2433;
         }
@@ -706,6 +804,7 @@
             </div>
             <!-- Card 1: The Available Letter (front) -->
             <div id="letter-card-1" class="card shadow-2xl">
+                <span class="peek" aria-hidden="true"></span>
                 <span class="fold" aria-hidden="true"></span>
                 <span class="flap-wrap" aria-hidden="true"><span class="flap"></span></span>
                 <span class="seal" aria-hidden="true">♥</span>
@@ -758,7 +857,7 @@
     </div>
 
     <!-- Moonlight Sonata, 1st movement. Paul Pitman for Musopen, public domain (via Wikimedia Commons). -->
-    <audio id="music" src="assets/music/moonlight.m4a" loop preload="none"></audio>
+    <audio id="music" src="assets/music/moonlight.m4a" loop preload="auto"></audio>
     <button id="music-toggle" class="music-toggle" type="button" aria-pressed="false" aria-label="Play music" title="Play music" data-state="idle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg></button>
 
     <script>
@@ -806,9 +905,27 @@
                 setFocus(null);
                 return;
             }
-            history.pushState({ letter: 1 }, '');
-            showLetter(true);
+            openLetter();
         });
+
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        let openingLetter = false;
+        function openLetter() {
+            if (openingLetter) return;
+            const card = document.getElementById('letter-card-1');
+            const finish = () => {
+                history.pushState({ letter: 1 }, '');
+                showLetter(true);
+                card.classList.remove('opening');
+                lettersView.classList.remove('leaving');
+                openingLetter = false;
+            };
+            if (reduceMotion) { finish(); return; }
+            openingLetter = true;
+            card.classList.add('opening');
+            setTimeout(() => lettersView.classList.add('leaving'), 1250);
+            setTimeout(finish, 1750);
+        }
 
         window.addEventListener('popstate', (e) => {
             showLetter(Boolean(e.state && e.state.letter));
@@ -839,7 +956,8 @@
         music.addEventListener('pause', updateMusicToggle);
 
         // Taps, clicks and key presses count; scrolling doesn't, so keep listening until a play succeeds
-        const startEvents = ['pointerup', 'touchend', 'click', 'keydown'];
+        // pointerdown starts it on press with a mouse; touch screens only allow it on release
+        const startEvents = ['pointerdown', 'pointerup', 'touchend', 'click', 'keydown'];
         function stopListening() {
             startEvents.forEach((t) => document.removeEventListener(t, startOnFirstInteraction, true));
         }
@@ -885,6 +1003,80 @@
             curtains.tabIndex = -1;
             curtains.blur();
         });
+
+        // With a mouse, moving the cursor out past the middle of the stage draws that side's
+        // curtain closed, more the further out it goes; fully closed at the very edge.
+        const hoverCurtains = window.matchMedia('(hover: hover) and (pointer: fine)').matches && !reduceMotion;
+        if (hoverCurtains) {
+            const drapeL = curtains.querySelector('.drape-left');
+            const drapeR = curtains.querySelector('.drape-right');
+            const tieL = curtains.querySelector('.tieback-left');
+            const tieR = curtains.querySelector('.tieback-right');
+            const ys = [0, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 100];
+            // Inner edge of a tied-back drape (same swoop as the CSS), as % of the drape's width
+            const inner = (y) => y <= 56
+                ? 100 - 62 * Math.pow(Math.sin((y / 56) * Math.PI / 2), 1.6)
+                : 38 + 62 * Math.pow((y - 56) / 44, 1.25);
+            const edgeAt = (y, c) => inner(y) + (100 - inner(y)) * c; // c: 0 tied back, 1 closed
+            const tied = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--tied')) || 0.16;
+
+            let live = false, target = { l: 0, r: 0 }, cur = { l: 0, r: 0 }, frame = 0;
+
+            function paint() {
+                const t = tied();
+                const halfW = window.innerWidth * 0.505;
+                [['l', drapeL, tieL], ['r', drapeR, tieR]].forEach(([side, drape, tie]) => {
+                    const c = cur[side];
+                    const pts = ys.map((y) => {
+                        const x = edgeAt(y, c);
+                        return side === 'l' ? `${x.toFixed(2)}% ${y}%` : `${(100 - x).toFixed(2)}% ${y}%`;
+                    });
+                    drape.style.clipPath = side === 'l'
+                        ? `polygon(0 0, ${pts.join(', ')}, 0 100%)`
+                        : `polygon(100% 0, ${pts.join(', ')}, 100% 100%)`;
+                    const scale = t + (1 - t) * c;
+                    drape.style.transform = `scaleX(${scale})`;
+                    const pinch = halfW * scale * (edgeAt(56, c) / 100);
+                    tie.style[side === 'l' ? 'left' : 'right'] = `calc(${pinch.toFixed(1)}px - clamp(13px, 1.6vw, 20px))`;
+                });
+            }
+
+            function step() {
+                frame = 0;
+                let moving = false;
+                ['l', 'r'].forEach((k) => {
+                    const d = target[k] - cur[k];
+                    if (Math.abs(d) > 0.001) { cur[k] += d * 0.14; moving = true; } else cur[k] = target[k];
+                });
+                paint();
+                if (moving) frame = requestAnimationFrame(step);
+            }
+            const kick = () => { if (!frame) frame = requestAnimationFrame(step); };
+
+            document.addEventListener('mousemove', (e) => {
+                if (!live || document.body.classList.contains('reading')) return;
+                if (e.target.closest && e.target.closest('.music-toggle')) return; // reaching for the music button
+                const W = window.innerWidth;
+                const zone = W * 0.505 * tied() + 48; // the drape plus a little margin; the middle is left alone
+                const pull = (dist) => dist >= zone ? 0 : Math.pow((zone - dist) / zone, 1.3);
+                target = { l: pull(e.clientX), r: pull(W - e.clientX) };
+                kick();
+            });
+            document.addEventListener('mouseout', (e) => {
+                if (!e.relatedTarget) { target = { l: 0, r: 0 }; kick(); } // cursor left the window
+            });
+            window.addEventListener('resize', () => { if (live) paint(); });
+
+            // Hand over from the CSS opening animation once it has finished
+            curtains.addEventListener('click', () => {
+                setTimeout(() => {
+                    [drapeL, drapeR, tieL, tieR].forEach((el) => { el.style.transition = 'none'; });
+                    tieL.style.opacity = tieR.style.opacity = '1';
+                    live = true;
+                    paint();
+                }, 2100);
+            });
+        }
         curtains.focus({ preventScroll: true });
 
         // Script to generate and place hearts randomly
