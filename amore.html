@@ -215,6 +215,55 @@
             }
         }
 
+        /* Music toggle: small round button in the bottom-right corner */
+        .music-toggle {
+            position: fixed;
+            right: max(1rem, env(safe-area-inset-right));
+            bottom: max(1rem, env(safe-area-inset-bottom));
+            z-index: 60;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            cursor: pointer;
+            background: #c3cfe2;
+            color: #2d3a4a;
+            border: 1px solid #b0bcd6;
+            box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+            transition: opacity 0.2s, transform 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body.reading .music-toggle {
+            background: #ffe4ec;
+            color: #d72660;
+            border-color: #f8bbd0;
+            box-shadow: 0 2px 8px rgba(220,38,127,0.08);
+        }
+        .music-toggle svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+        /* Crossed out only once she has paused it; before the first tap it just invites a tap */
+        .music-toggle[data-state="paused"] {
+            opacity: 0.55;
+        }
+        .music-toggle[data-state="paused"]::after {
+            content: "";
+            position: absolute;
+            width: 22px;
+            height: 2px;
+            background: currentColor;
+            transform: rotate(-45deg);
+            border-radius: 1px;
+        }
+        .music-toggle:active {
+            transform: scale(0.94);
+        }
+
         /* ================= Single letter view ================= */
 
         /* The fan is shifted to stay centred; never let it cause sideways scrolling */
@@ -224,6 +273,7 @@
         }
 
         #letter-view {
+            padding-bottom: 5rem !important; /* Room so the music button never covers the last line */
             position: relative;
             overflow: hidden; /* Keep the floating hearts from adding scrollbars */
         }
@@ -414,6 +464,10 @@
         <button class="back-button" onclick="history.back()">Back to Letters</button>
     </div>
 
+    <!-- Moonlight Sonata, 1st movement. Paul Pitman for Musopen, public domain (via Wikimedia Commons). -->
+    <audio id="music" src="assets/music/moonlight.m4a" loop preload="none"></audio>
+    <button id="music-toggle" class="music-toggle" type="button" aria-pressed="false" aria-label="Play music" title="Play music" data-state="idle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg></button>
+
     <script>
         const lettersView = document.getElementById('letters-view');
         const letterView = document.getElementById('letter-view');
@@ -423,6 +477,7 @@
             if (typeof setFocus === 'function') setFocus(null);
             lettersView.hidden = open;
             letterView.hidden = !open;
+            document.body.classList.toggle('reading', open);
             document.title = open ? 'A Letter for You' : 'A Collection of Letters';
             window.scrollTo(0, 0);
         }
@@ -464,6 +519,67 @@
 
         window.addEventListener('popstate', (e) => {
             showLetter(Boolean(e.state && e.state.letter));
+        });
+
+        // Music: browsers only allow sound after the first tap or click, so start it then.
+        // The button pauses and resumes; a pause by her is remembered for this visit.
+        const music = document.getElementById('music');
+        const musicToggle = document.getElementById('music-toggle');
+        let musicWanted = true;    // false once she pauses it herself
+        let resumeOnReturn = false;
+
+        function updateMusicToggle() {
+            const playing = !music.paused;
+            musicToggle.dataset.state = playing ? 'playing' : (musicWanted ? 'idle' : 'paused');
+            musicToggle.setAttribute('aria-pressed', String(playing));
+            const label = playing ? 'Pause music' : 'Play music';
+            musicToggle.setAttribute('aria-label', label);
+            musicToggle.title = label;
+        }
+
+        function playMusic() {
+            const attempt = music.play();
+            if (attempt) attempt.catch(() => {}).finally(updateMusicToggle);
+        }
+
+        music.addEventListener('play', updateMusicToggle);
+        music.addEventListener('pause', updateMusicToggle);
+
+        // Taps, clicks and key presses count; scrolling doesn't, so keep listening until a play succeeds
+        const startEvents = ['pointerup', 'touchend', 'click', 'keydown'];
+        function stopListening() {
+            startEvents.forEach((t) => document.removeEventListener(t, startOnFirstInteraction, true));
+        }
+        function startOnFirstInteraction(e) {
+            if (e.target === musicToggle) return; // the button handles itself
+            if (!musicWanted) { stopListening(); return; }
+            if (!music.paused) { stopListening(); return; }
+            const attempt = music.play();
+            if (attempt) {
+                attempt.then(stopListening).catch(() => {}).finally(updateMusicToggle);
+            }
+        }
+        startEvents.forEach((t) => document.addEventListener(t, startOnFirstInteraction, true));
+
+        musicToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (music.paused) {
+                musicWanted = true;
+                playMusic();
+            } else {
+                musicWanted = false;
+                music.pause();
+            }
+        });
+
+        // Pause while she's on another tab or app, and pick up again when she's back
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                resumeOnReturn = !music.paused;
+                music.pause();
+            } else if (resumeOnReturn && musicWanted) {
+                playMusic();
+            }
         });
 
         // Script to generate and place hearts randomly
