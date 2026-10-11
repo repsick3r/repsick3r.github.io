@@ -42,30 +42,34 @@
         .page-header {
             position: relative;
             text-align: center;
-            margin-bottom: 3.5rem; /* Clear the stacked cards, which rise above the front card */
+            margin-bottom: 0.5rem;
             margin-top: 4rem; /* Space for the home button */
         }
 
-        /* Carousel container is centered and takes up screen width on mobile */
+        /* Fanned card carousel, used at every screen size. Its geometry comes from
+           the variables below; phones and tablets get a tighter fan that fits the width. */
         .carousel-container {
+            --w: min(320px, calc((100vw - 24px) / 2.2), calc((100svh - 240px) / 2.05)); /* card width */
+            --x1: -30%;   --r1: -6deg;   /* middle card offset and tilt */
+            --x2: -60%;   --r2: -12deg;  /* back card offset and tilt */
+            --x1h: -45%;  --x2h: -85%;   /* where they slide to while the front card is focused */
+            --fx: 25%;                   /* where the front card slides to while a back card is focused */
             position: relative;
-            width: 90vw;
-            height: 60vh;
-            max-height: 450px;
+            width: 100%;
+            height: calc(var(--w) * 2.05);
             margin: 0 auto;
             display: flex;
             justify-content: center;
             align-items: center;
             perspective: 1500px;
             transform-style: preserve-3d;
+            transform: translateX(calc(var(--w) * 0.29)); /* centre the fan, which spreads to the left */
         }
 
         /* Base card style */
         .card {
-            width: 100%;
-            height: 100%;
-            max-width: 300px;
-            max-height: 420px;
+            width: var(--w);
+            height: calc(var(--w) * 1.406);
             transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.6s;
             cursor: pointer;
             position: absolute;
@@ -74,29 +78,94 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* Mobile card stacking */
+        /* Phones and tablets: card text and padding follow the smaller card size.
+           Laptops keep the original sizes. */
+        @media (max-width: 1279px) {
+            .card {
+                padding: clamp(0.75rem, calc(var(--w) * 0.06), 1.5rem);
+            }
+            .card h2 {
+                font-size: clamp(1.125rem, calc(var(--w) * 0.075), 1.875rem);
+                margin-bottom: clamp(0.5rem, calc(var(--w) * 0.04), 1rem);
+            }
+            .card .text-2xl {
+                font-size: clamp(1rem, calc(var(--w) * 0.06), 1.5rem);
+            }
+            .card .text-xl {
+                font-size: clamp(0.95rem, calc(var(--w) * 0.05), 1.25rem);
+            }
+            .card .text-sm,
+            .card .m-auto > p:last-child {
+                font-size: clamp(0.75rem, calc(var(--w) * 0.034), 0.875rem);
+            }
+        }
+
+        /* Fanned-out layout - align left bottom corners on a sloped line */
         #letter-card-1 {
             z-index: 3;
-            transform: translateY(0) rotate(2deg);
+            transform: translateX(0) translateY(0) scale(1.2) rotateZ(0deg);
             background: linear-gradient(135deg, #fce3ec 0%, #f3e5f5 100%);
         }
         #placeholder-1 {
             z-index: 2;
-            transform: translateY(-5%) rotate(-2deg);
+            transform: translateX(var(--x1)) translateY(calc(var(--w) * 0.144)) scale(0.96) rotateZ(var(--r1));
             background: linear-gradient(135deg, #fffde7 0%, #fff9c4 100%);
         }
         #placeholder-2 {
             z-index: 1;
-            transform: translateY(-10%) rotate(1deg);
+            transform: translateX(var(--x2)) translateY(calc(var(--w) * 0.288)) scale(0.77) rotateZ(var(--r2));
             background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
         }
 
-        /* Mobile tap/active effect - brings card to front */
-        .carousel-container .card:active {
-            transform: translateY(-5%) scale(1.05);
-            z-index: 10;
+        /* Mouse: hovering a card brings it forward and fans the others out */
+        @media (hover: hover) {
+            .carousel-container .card:hover {
+                transform: scale(1.25) rotateZ(0) !important;
+                z-index: 30;
+                box-shadow: 0 8px 32px rgba(44,62,80,0.2);
+            }
+
+            .carousel-container:has(#letter-card-1:hover) #placeholder-1 {
+                transform: translateX(var(--x1h)) translateY(calc(var(--w) * 0.144)) scale(0.9) rotateZ(calc(var(--r1) * 1.5));
+            }
+            .carousel-container:has(#letter-card-1:hover) #placeholder-2 {
+                transform: translateX(var(--x2h)) translateY(calc(var(--w) * 0.288)) scale(0.8) rotateZ(calc(var(--r2) * 1.25));
+            }
+
+            .carousel-container:has(#placeholder-1:hover) #letter-card-1 {
+                transform: translateX(var(--fx)) translateY(0) scale(1) rotateZ(8deg);
+            }
+            .carousel-container:has(#placeholder-1:hover) #placeholder-2 {
+                transform: translateX(var(--x1h)) translateY(calc(var(--w) * 0.288)) scale(0.9) rotateZ(calc(var(--r2) * 1.25));
+            }
+
+            .carousel-container:has(#placeholder-2:hover) #letter-card-1 {
+                transform: translateX(var(--fx)) translateY(0) scale(1) rotateZ(8deg);
+            }
+            .carousel-container:has(#placeholder-2:hover) #placeholder-1 {
+                transform: translateX(0) translateY(calc(var(--w) * 0.144)) scale(0.9) rotateZ(var(--r1));
+            }
+        }
+
+        /* Touch: tapping a back card brings it forward the same way (set from the script below) */
+        .carousel-container[data-focus="placeholder-1"] #placeholder-1,
+        .carousel-container[data-focus="placeholder-2"] #placeholder-2 {
+            transform: scale(1.25) rotateZ(0);
+            z-index: 30;
+            box-shadow: 0 8px 32px rgba(44,62,80,0.2);
+        }
+        .carousel-container[data-focus="placeholder-1"] #letter-card-1,
+        .carousel-container[data-focus="placeholder-2"] #letter-card-1 {
+            transform: translateX(var(--fx)) translateY(0) scale(1) rotateZ(8deg);
+        }
+        .carousel-container[data-focus="placeholder-1"] #placeholder-2 {
+            transform: translateX(var(--x1h)) translateY(calc(var(--w) * 0.288)) scale(0.9) rotateZ(calc(var(--r2) * 1.25));
+        }
+        .carousel-container[data-focus="placeholder-2"] #placeholder-1 {
+            transform: translateX(0) translateY(calc(var(--w) * 0.144)) scale(0.9) rotateZ(var(--r1));
         }
 
         /* Back to Home button */
@@ -115,7 +184,7 @@
         }
 
         /* --- Desktop Styles (Applied on larger screens) --- */
-        /* Below 1280px the stacked mobile layout is used, since the fanned cards need the width. */
+        /* From 1280px the heading moves to a left column and the fan opens wider on the right. */
         @media (min-width: 1280px) {
             /* Header sits in a left column */
             .page-header {
@@ -130,9 +199,13 @@
             }
 
             /* Card width scales with the screen so the fan never reaches the header
-               or runs off the top and bottom. Everything below is relative to --w. */
+               or runs off the top and bottom. */
             .carousel-container {
                 --w: min(416px, calc((100vw - 540px) / 2.6), calc((100vh - 140px) / 1.9));
+                --x1: -55%;   --r1: -8deg;
+                --x2: -110%;  --r2: -16deg;
+                --x1h: -80%;  --x2h: -130%;
+                --fx: 55%;
                 position: absolute;
                 left: calc(100% - 56px - var(--w) * 0.65);
                 top: 50%;
@@ -140,58 +213,15 @@
                 width: auto;
                 height: auto;
             }
-
-            .card {
-                width: var(--w);
-                height: calc(var(--w) * 1.406);
-                max-width: none;
-                max-height: none;
-            }
-
-            /* Fanned-out desktop layout - align left bottom corners on a sloped line */
-            #letter-card-1 {
-                transform: translateX(0) translateY(0) scale(1.2) rotateZ(0deg);
-                z-index: 3;
-            }
-            #placeholder-1 {
-                transform: translateX(-55%) translateY(calc(var(--w) * 0.144)) scale(0.96) rotateZ(-8deg);
-                z-index: 2;
-            }
-            #placeholder-2 {
-                transform: translateX(-110%) translateY(calc(var(--w) * 0.288)) scale(0.77) rotateZ(-16deg);
-                z-index: 1;
-            }
-
-            /* Desktop hover effect - highlights the hovered card and adjusts others */
-            .carousel-container .card:hover {
-                transform: scale(1.25) rotateZ(0) !important;
-                z-index: 30;
-                box-shadow: 0 8px 32px rgba(44,62,80,0.2);
-            }
-
-            .carousel-container:has(#letter-card-1:hover) #placeholder-1 {
-                transform: translateX(-80%) translateY(calc(var(--w) * 0.144)) scale(0.9) rotateZ(-12deg);
-            }
-            .carousel-container:has(#letter-card-1:hover) #placeholder-2 {
-                transform: translateX(-130%) translateY(calc(var(--w) * 0.288)) scale(0.8) rotateZ(-20deg);
-            }
-
-            .carousel-container:has(#placeholder-1:hover) #letter-card-1 {
-                transform: translateX(55%) translateY(0) scale(1) rotateZ(8deg);
-            }
-            .carousel-container:has(#placeholder-1:hover) #placeholder-2 {
-                transform: translateX(-80%) translateY(calc(var(--w) * 0.288)) scale(0.9) rotateZ(-20deg);
-            }
-
-            .carousel-container:has(#placeholder-2:hover) #letter-card-1 {
-                transform: translateX(55%) translateY(0) scale(1) rotateZ(8deg);
-            }
-            .carousel-container:has(#placeholder-2:hover) #placeholder-1 {
-                transform: translateX(0) translateY(calc(var(--w) * 0.144)) scale(0.9) rotateZ(-8deg);
-            }
         }
 
         /* ================= Single letter view ================= */
+
+        /* The fan is shifted to stay centred; never let it cause sideways scrolling */
+        #letters-view {
+            overflow-x: hidden;
+            overflow-x: clip;
+        }
 
         #letter-view {
             position: relative;
@@ -390,15 +420,44 @@
 
         // Swap between the collection and the open letter without changing the URL
         function showLetter(open) {
+            if (typeof setFocus === 'function') setFocus(null);
             lettersView.hidden = open;
             letterView.hidden = !open;
             document.title = open ? 'A Letter for You' : 'A Collection of Letters';
             window.scrollTo(0, 0);
         }
 
+        // Touch screens have no hover, so tapping a back card brings it forward instead.
+        // Tapping it again, the front card, or anywhere else puts the cards back.
+        const carousel = document.querySelector('.carousel-container');
+        const canHover = window.matchMedia('(hover: hover)').matches;
+
+        function setFocus(id) {
+            if (id) carousel.dataset.focus = id;
+            else delete carousel.dataset.focus;
+        }
+
+        ['placeholder-1', 'placeholder-2'].forEach((id) => {
+            document.getElementById(id).addEventListener('click', (e) => {
+                if (canHover) return;
+                e.stopPropagation();
+                setFocus(carousel.dataset.focus === id ? null : id);
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (carousel.dataset.focus && !carousel.contains(e.target)) setFocus(null);
+        });
+
         // When the main letter card is clicked, open the letter on this same page.
         // pushState keeps the URL identical but lets the browser/phone back button close the letter.
-        document.getElementById('letter-card-1').addEventListener('click', () => {
+        document.getElementById('letter-card-1').addEventListener('click', (e) => {
+            if (carousel.dataset.focus) {
+                // A back card is in front: the first tap just brings the letter forward again
+                e.stopPropagation();
+                setFocus(null);
+                return;
+            }
             history.pushState({ letter: 1 }, '');
             showLetter(true);
         });
